@@ -78,6 +78,7 @@ fi
 
 # Normal extraction mode
 FIRMWARE_FILE=$1
+FIRMWARE_FILE=${FIRMWARE_FILE#./}
 echo -e "${YELLOW}[*]${END} Extracting firmware from '$FIRMWARE_FILE'..."
 
 # Copy firmware file to temporary file
