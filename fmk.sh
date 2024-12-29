@@ -28,12 +28,14 @@ fi
 if [ -z "$1" ] && [ "$BUILD_MODE" = false ]; then
   echo -e "${RED}[-]${END} Please provide the firmware file path or use the -b flag with a folder path."
   echo -e "${YELLOW}[*]${END} Usage:  $0 [-d] <firmware_file_path> | -b <folder_path>"
-  exit 0
+  docker rm -f $CONTAINER_NAME && exit 0
 fi
 
-CONTAINER_NAME="firmware_mod_kit_container"
+# CONTAINER_NAME="firmware_mod_kit_container"
+randc=$(head /dev/urandom | tr -dc a-f0-9 | head -c 8)
+CONTAINER_NAME="fmkfast_$randc"
 LOCAL_FOLDER=$(pwd)
-TO_ANA_BIN="to_ana_bin"
+TO_ANA_BIN="to_ana_bin_$randc"
 
 # Start Docker container
 echo -e "${YELLOW}[*]${END} Starting Docker container..."
@@ -45,7 +47,7 @@ fi
 
 if [ $? -ne 0 ]; then
   echo -e "${RED}[-]${END} Failed to start Docker container."
-  exit 1
+  docker rm -f $CONTAINER_NAME && exit 1
 fi
 
 # If BUILD_MODE is enabled, copy the specified folder and build the new firmware
@@ -66,11 +68,11 @@ if $BUILD_MODE; then
     fi
 
     docker stop $CONTAINER_NAME
-    exit 0
+    docker rm -f $CONTAINER_NAME && exit 0
   else
     echo -e "${RED}[-]${END} Provided folder '$PARAM_FOLDER' does not exist."
     docker stop $CONTAINER_NAME
-    exit 1
+    docker rm -f $CONTAINER_NAME && exit 1
   fi
 fi
 
@@ -90,9 +92,9 @@ fi
 
 if [ $? -ne 0 ]; then
   echo -e "${RED}[-]${END} Failed to copy firmware file to Docker container."
-  docker stop $CONTAINER_NAME
+  docker rm -f $CONTAINER_NAME
   rm "$TO_ANA_BIN"
-  exit 1
+  docker rm -f $CONTAINER_NAME && exit 1
 fi
 
 # Extract firmware file in Docker container
@@ -104,12 +106,12 @@ fi
 
 if [ $? -eq 0 ]; then
   echo -e "${GREEN}[+]${END} Firmware extracted successfully."
-  docker cp "$CONTAINER_NAME:/firmware-mod-kit/fmk" "$LOCAL_FOLDER" >>/dev/null
-  echo -e "${GREEN}[+]${END} 'fmk' folder copied to the host machine."
+  docker cp "$CONTAINER_NAME:/firmware-mod-kit/fmk" "$LOCAL_FOLDER/fmk_$FIRMWARE_FILE" >>/dev/null
+  echo -e "${GREEN}[+]${END} '${YELLOW}fmk_$FIRMWARE_FILE${END}' folder copied to the host machine."
 else
   echo -e "${RED}[-]${END} Firmware extraction failed."
 fi
 
 # Clean up
-docker stop $CONTAINER_NAME >>/dev/null
+docker rm -f $CONTAINER_NAME >>/dev/null
 rm "$TO_ANA_BIN"
