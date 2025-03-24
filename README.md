@@ -3,6 +3,7 @@
 ![Platform](https://img.shields.io/badge/platform-Linux-blueviolet)
 ![Forks](https://img.shields.io/github/forks/N1nEmAn/fmk-fast)
 ![Stars](https://img.shields.io/github/stars/N1nEmAn/fmk-fast)
+
 ![wmremove-transformed-removebg-preview](https://github.com/user-attachments/assets/b7322269-4242-416f-a912-5a45a59e9c0c)
 
 - **🚀 Quick and Easy Firmware Extraction**: This tool allows you to use the Firmware Mod Kit (FMK) for firmware extraction with ease.
