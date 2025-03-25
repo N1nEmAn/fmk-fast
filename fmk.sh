@@ -69,10 +69,12 @@ if $BUILD_MODE; then
 
     docker stop $CONTAINER_NAME
     docker rm -f $CONTAINER_NAME && exit 0
+    exit 1
   else
     echo -e "${RED}[-]${END} Provided folder '$PARAM_FOLDER' does not exist."
     docker stop $CONTAINER_NAME
     docker rm -f $CONTAINER_NAME && exit 1
+    exit 1
   fi
 fi
 
